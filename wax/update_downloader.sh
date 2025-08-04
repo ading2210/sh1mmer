@@ -57,7 +57,11 @@ file_channel=$(echo "$file_name" | cut -d_ -f4)
 file_url="$UPDATE_SOURCE/$BOARD/$file_version/$file_channel/$file_name"
 
 echo "Downloading update payload..."
-curl "$file_url" -o "$WORKDIR/$file_name"
+if [ "$QUIET" ]; then
+	curl -s "$file_url" -o "$WORKDIR/$file_name"
+else
+	curl "$file_url" -o "$WORKDIR/$file_name"
+fi
 
 if ! [ -d "$UPDATE_ENGINE" ]; then
 	echo "Downloading update_engine..."

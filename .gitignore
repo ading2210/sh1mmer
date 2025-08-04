@@ -38,3 +38,4 @@ buildroot-source-i386.tar.gz
 buildroot-2023.02.9.tar.gz
 
 wax/shim_downloads/
+.venv

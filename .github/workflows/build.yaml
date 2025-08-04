@@ -1,0 +1,39 @@
+on: [push]
+
+jobs:
+  build:
+    strategy: 
+      matrix:
+        board: [ambassador, brask, brya, coral, corsola, dedede, fizz, grunt, hatch, jacuzzi, kalista, kukui, nami, nissa, octopus, puff, pyro, reef, sand, snappy, strongbad, trogdor, volteer, zork]
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 32768
+          swap-size-mb: 64
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
+      - name: download repo
+        uses: actions/checkout@v4
+      
+      - name: run build
+        run: |
+          set -x
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler pv
+
+          cd wax/
+          sudo QUIET=1 ./build_complete.sh "${{ matrix.board }}"
+
+      - name: upload img
+        uses: actions/upload-artifact@v4
+        with:
+          name: sh1mmer_${{ matrix.board }}_br0ker.bin
+          path: wax/shim_downloads/sh1mmer_${{ matrix.board }}_br0ker.bin
+          compression-level: 7

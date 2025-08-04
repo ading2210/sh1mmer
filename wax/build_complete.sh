@@ -24,7 +24,11 @@ out_path="$shim_dir/sh1mmer_${board}_br0ker.bin"
 mkdir -p "$shim_dir"
 if [ ! -f "$shim_path" ] && [ ! -f "$shim_zip_path" ]; then
   echo "downloading rma shim"
-  wget "$shim_url" -O "$shim_zip_path"
+  if [ "$QUIET" ]; then
+    wget -q "$shim_url" -O "$shim_zip_path"
+  else
+    wget "$shim_url" -O "$shim_zip_path"
+  fi
 fi
 if [ ! -f "$shim_path" ]; then
   echo "extracting rma shim"
@@ -34,6 +38,13 @@ fi
 
 if [ ! -d "$base_dir/mounted_payloads/updates/"*"/$board" ]; then
   echo "running update downloader"
+  if [ ! -d "$base_dir/.venv" ]; then
+    python3 -m venv "$base_dir/.venv"
+    source "$base_dir/.venv/bin/activate"
+    pip3 install protobuf six
+  else
+    source "$base_dir/.venv/bin/activate"
+  fi
   bash ./update_downloader.sh "$board"
 fi
 
@@ -41,5 +52,5 @@ echo "copying original shim"
 cp "$shim_path" "$out_path"
 
 echo "running wax.sh"
-bash wax.sh -i "$out_path" -s 2.5G
+bash wax.sh -i "$out_path" -s 3G
 echo "done! your generated shim is located at $out_path"
