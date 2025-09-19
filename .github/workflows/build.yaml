@@ -29,11 +29,24 @@ jobs:
           sudo apt-get install -y protobuf-compiler pv
 
           cd wax/
-          sudo QUIET=1 ./build_complete.sh "${{ matrix.board }}"
+          BOARD="${{ matrix.board }}"
+          sudo QUIET=1 ./build_complete.sh "$BOARD"
 
-      - name: upload img
+      - name: upload img as artifact
         uses: actions/upload-artifact@v4
         with:
           name: sh1mmer_${{ matrix.board }}_br0ker.bin
           path: wax/shim_downloads/sh1mmer_${{ matrix.board }}_br0ker.bin
           compression-level: 7
+      
+      - name: compress the disk image
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          sudo zip -9 wax/shim_downloads/sh1mmer_${{ matrix.board }}_br0ker.zip wax/shim_downloads/sh1mmer_${{ matrix.board }}_br0ker.bin
+      
+      - name: create release
+        uses: ading2210/gh-large-releases@main
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          files: wax/shim_downloads/*.zip
