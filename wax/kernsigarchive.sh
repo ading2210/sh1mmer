@@ -5,7 +5,7 @@ set -eE
 shellball_source="https://www.mrchromebox.tech/files/firmware/shellball/"
 
 fail() {
-	printf "%s\n" "$*" >&2
+	printf "%b\n" "$*" >&2
 	exit 1
 }
 

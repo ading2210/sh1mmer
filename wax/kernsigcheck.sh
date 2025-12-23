@@ -7,7 +7,7 @@ set -eE
 KEYFILE="$SCRIPT_DIR"/lib/mp-reco-2024-05-03.txt
 
 fail() {
-	printf "%s\n" "$*" >&2
+	printf "%b\n" "$*" >&2
 	exit 1
 }
 
